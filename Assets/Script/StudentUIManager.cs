@@ -19,6 +19,8 @@ public class StudentUIManager : MonoBehaviour
 
     public Transform studentListPanel;
     public GameObject studentTextPrefab;
+    public Text errorText; // Add an errorText UI element to display error messages
+
 
     private StudentManager studentManager;
 
@@ -27,61 +29,150 @@ public class StudentUIManager : MonoBehaviour
     {
         studentManager = new StudentManager();
         //DisplayAllStudents();
-        //searchButton.onClick.AddListener(SearchNameStudent);
+        
+
     }
 
     public void AddStudent()
     {
-        int id = int.Parse(idInputField.text);
-        string name = nameInputField.text;
-        int age = int.Parse(ageInputField.text);
-        
-        bool sex = toggleMale.isOn; // True if Male, False if Female
-        string major = "majorInputField.text";
-        float grade = float.Parse(gradeInputField.text);
+        if (ValidateInputs(out int id, out int age, out float grade))
+        {
+            string name = nameInputField.text;
+            bool sex = toggleMale.isOn;
+            string major = majorInputField.text;
 
+            Student newStudent = new Student(id, name, age, sex, major, grade);
+            studentManager.AddStudent(newStudent);
 
-        Student newStudent = new Student(id, name, age, sex, major, grade);
-        studentManager.AddStudent(newStudent);
-
-        DisplayAllStudents();
-    }
-
-    public void RemoveStudent()
-    {
-        int id = int.Parse(idInputField.text);
-        studentManager.RemoveStudent(id);
-
-        DisplayAllStudents();
-    }
-
-    public void UpdateStudent()
-    {
-        int id = int.Parse(idInputField.text);
-        string name = nameInputField.text;
-        int age = int.Parse(ageInputField.text);
-        bool sex = toggleMale.isOn; 
-        string major = majorInputField.text;
-        float grade = float.Parse(gradeInputField.text);
-
-        Student updatedStudent = new Student(id, name, age, sex, major, grade);
-        studentManager.UpdateStudent(updatedStudent);
-
-        DisplayAllStudents();
+            DisplayAllStudents();
+            ClearInputs();
+        }
     }
 
     public void DisplayAllStudents()
     {
-        //clear previous list
-        foreach (GameObject child in studentListPanel.transform)
+        DisplayStudents(studentManager.GetAllStudents());
+    }
+
+    public void RemoveStudent()
+    {
+        if (int.TryParse(idInputField.text, out int id))
         {
-            Destroy(child);
+            studentManager.RemoveStudent(id);
+            DisplayAllStudents();
+            ClearInputs();
+        }
+        else
+        {
+            DisplayError("Invalid ID format.");
+        }
+    }
+   
+    public void UpdateStudent()
+    {
+        int id = int.Parse(idInputField.text);
+        Student existingStudent = studentManager.GetStudentById(id);
+
+        if (existingStudent == null)
+        {
+            Debug.LogWarning("Student not found with ID: " + id);
+            return;
         }
 
-        List<Student> students = studentManager.GetAllStudents();
+        // Update only the fields that were provided in the input fields
+        if (!string.IsNullOrEmpty(nameInputField.text))
+        {
+            existingStudent.Name = nameInputField.text;
+        }
+
+        if (!string.IsNullOrEmpty(ageInputField.text))
+        {
+            existingStudent.Age = int.Parse(ageInputField.text);
+        }
+
+        existingStudent.Sex = toggleMale.isOn; // Assuming you have a toggle for Male/Female
+        existingStudent.Major = majorInputField.text;
+
+        if (!string.IsNullOrEmpty(gradeInputField.text))
+        {
+            existingStudent.Grade = float.Parse(gradeInputField.text);
+        }
+
+        // Call the UpdateStudent method of StudentManager
+        studentManager.UpdateStudent(existingStudent);
+
+        // Display updated student list
+        DisplayAllStudents();
+    }
+
+
+    private bool ValidateInputs(out int id, out int age, out float grade)
+    {
+        id = 0;
+        age = 0;
+        grade = 0f;
+        StringBuilder errorMessage = new StringBuilder();
+
+        if (!int.TryParse(idInputField.text, out id))
+        {
+            errorMessage.AppendLine("Invalid ID format.");
+        }
+
+        if (!int.TryParse(ageInputField.text, out age))
+        {
+            errorMessage.AppendLine("Invalid age format.");
+        }
+
+        if (!float.TryParse(gradeInputField.text, out grade))
+        {
+            errorMessage.AppendLine("Invalid grade format.");
+        }
+
+        if (errorMessage.Length > 0)
+        {
+            DisplayError(errorMessage.ToString());
+            return false;
+        }
+
+        return true;
+    }
+
+    private void DisplayError(string message)
+    {
+        if (errorText != null)
+        {
+            errorText.text = message;
+        }
+    }
+
+    private void ClearInputs()
+    {
+        idInputField.text = "";
+        nameInputField.text = "";
+        ageInputField.text = "";
+        toggleMale.isOn = true;
+        majorInputField.text = "";
+        gradeInputField.text = "";
+        if (errorText != null)
+        {
+            errorText.text = "";
+        }
+    }
+
+    public void DisplayStudents(List<Student> students)
+    {
+        //clear previous list
+        foreach (Transform child in studentListPanel)
+        {
+            Destroy(child.gameObject);
+        }
+
+        //List<Student> students = studentManager.GetAllStudents();
         foreach (Student student in students)
         {
             GameObject studentText = Instantiate(studentTextPrefab, studentListPanel);
+            //StudentInfo studentInfo = studentText.GetComponent<StudentInfo>();
+
             studentText.GetComponent<StudentInfo>().txt_1.text = student.Id.ToString();
             studentText.GetComponent<StudentInfo>().txt_2.text = student.Name;
             studentText.GetComponent<StudentInfo>().txt_3.text = student.Age.ToString();
@@ -89,14 +180,6 @@ public class StudentUIManager : MonoBehaviour
             studentText.GetComponent<StudentInfo>().txt_5.text = student.Major;
             studentText.GetComponent<StudentInfo>().txt_6.text = student.Grade.ToString();
         }
-        //for (int i=0; i<5; i++)
-        //{
-        //    GameObject studentText = Instantiate(studentTextPrefab, studentListPanel);
-        //    studentText.GetComponent<StudentInfo>().txt_1.text = "abc";
-        //    studentText.GetComponent<StudentInfo>().txt_2.text = "123";
-        //    studentText.GetComponent<StudentInfo>().txt_3.text = "1234";
-        //    studentText.GetComponent<StudentInfo>().txt_4.text = "21345";
-        //    studentText.GetComponent<StudentInfo>().txt_5.text = "123456";
-        //}
+        
     }
 }

@@ -67,15 +67,38 @@ public class StudentManager
 
     public void UpdateStudent(Student updatedStudent)
     {
-        for (int i = 0; i < students.Count; i++)
+        Student existingStudent = students.Find(s => s.Id == updatedStudent.Id);
+        if (existingStudent != null)
         {
-            if (students[i].Id == updatedStudent.Id)
-            {
-                students[i] = updatedStudent;
-                break;
-            }
+            existingStudent.Name = updatedStudent.Name;
+            existingStudent.Age = updatedStudent.Age;
+            existingStudent.Sex = updatedStudent.Sex;
+            existingStudent.Major = updatedStudent.Major;
+            existingStudent.Grade = updatedStudent.Grade;
+        }
+        else
+        {
+            Debug.LogWarning($"Student with ID {updatedStudent.Id} not found.");
         }
     }
+
+    //public void UpdateStudent(Student updatedStudent)
+    //{
+    //    for (int i = 0; i < students.Count; i++)
+    //    {
+    //        if (students[i].Id == updatedStudent.Id)
+    //        {
+    //            // C?p nh?t t?ng tr??ng c?a sinh viên
+    //            students[i].Name = updatedStudent.Name;
+    //            students[i].Age = updatedStudent.Age;
+    //            students[i].Sex = updatedStudent.Sex;
+    //            students[i].Major = updatedStudent.Major;
+    //            students[i].Grade = updatedStudent.Grade;
+    //            break;
+    //        }
+    //    }
+    //}
+
 
     [System.Serializable]
     private class StudentListWrapper
