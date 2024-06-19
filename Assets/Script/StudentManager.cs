@@ -39,31 +39,42 @@ public class StudentManager
         return students.Find(student => student.Id == id);
     }
 
-    public void RemoveStudent(int id)
+    //public void RemoveStudent(int id)
+    //{
+    //    Student student = GetStudentById(id);
+    //    if (student != null)
+    //    {
+    //        students.Remove(student);
+    //        //SaveStudents();
+    //    }
+    //}
+    public bool RemoveStudent(int id)
     {
-        Student student = GetStudentById(id);
+        Student student = students.Find(s => s.Id == id);
         if (student != null)
         {
             students.Remove(student);
-            SaveStudents();
+            return true;
         }
+        return false;
     }
 
-    private void SaveStudents()
-    {
-        string json = JsonUtility.ToJson(new StudentListWrapper { students = this.students });
-        File.WriteAllText(filePath, json);
-    }
 
-    private void LoadStudents()
-    {
-        if (File.Exists(filePath))
-        {
-            string json = File.ReadAllText(filePath);
-            StudentListWrapper wrapper = JsonUtility.FromJson<StudentListWrapper>(json);
-            students = wrapper.students;
-        }
-    }
+    //private void SaveStudents()
+    //{
+    //    string json = JsonUtility.ToJson(new StudentListWrapper { students = this.students });
+    //    File.WriteAllText(filePath, json);
+    //}
+
+    //private void LoadStudents()
+    //{
+    //    if (File.Exists(filePath))
+    //    {
+    //        string json = File.ReadAllText(filePath);
+    //        StudentListWrapper wrapper = JsonUtility.FromJson<StudentListWrapper>(json);
+    //        students = wrapper.students;
+    //    }
+    //}
 
     public void UpdateStudent(Student updatedStudent)
     {

@@ -13,12 +13,13 @@ public class StudentUIManager : MonoBehaviour
     public Toggle toggleFemale;
     public InputField majorInputField;
     public InputField gradeInputField;
+    public InputField deleteIdInputField;
 
     //public InputField searchInputField;
     //public Button searchButton;
 
-    public Transform studentListPanel;
-    public GameObject studentTextPrefab;
+    public Transform studentListPanel; //Panel chua danh sach SV 
+    public GameObject studentTextPrefab; //Prefab cho moi SV
     public Text errorText; // Add an errorText UI element to display error messages
 
 
@@ -54,20 +55,42 @@ public class StudentUIManager : MonoBehaviour
         DisplayStudents(studentManager.GetAllStudents());
     }
 
+    //public void RemoveStudent()
+    //{
+    //    if (int.TryParse(deleteIdInputField.text, out int id))
+    //    {
+    //        studentManager.RemoveStudent(id);
+    //        DisplayAllStudents();
+    //        ClearInputs();
+    //    }
+    //    else
+    //    {
+    //        DisplayError("Invalid ID format.");
+    //    }
+    //}
     public void RemoveStudent()
     {
-        if (int.TryParse(idInputField.text, out int id))
+        if (int.TryParse(deleteIdInputField.text, out int id))
         {
-            studentManager.RemoveStudent(id);
-            DisplayAllStudents();
-            ClearInputs();
+            bool isRemoved = studentManager.RemoveStudent(id);
+
+            if (isRemoved)
+            {
+                DisplayAllStudents();
+                //ClearInputs();
+            }
+            else
+            {
+                Debug.Log("Student not found.");
+            }
         }
         else
         {
-            DisplayError("Invalid ID format.");
+            Debug.Log("Invalid ID format.");
         }
     }
-   
+
+
     public void UpdateStudent()
     {
         int id = int.Parse(idInputField.text);
