@@ -20,14 +20,14 @@ public class StudentManager
             new Student(4, "Bob Brown", 23, true, "Chemistry", 3.2f),
             new Student(5, "Charlie Davis", 24, true, "Biology", 3.6f)
         };
-        //filePath = Path.Combine(Application.persistentDataPath, "students.json");
-        //LoadStudents();
+        filePath = Path.Combine(Application.persistentDataPath, "students.json");
+        LoadStudents();
     }
 
     public void AddStudent(Student student)
     {
         students.Add(student);
-        //SaveStudents();
+        SaveStudents();
     }
 
     public List<Student> GetAllStudents()
@@ -45,41 +45,17 @@ public class StudentManager
         return students.OrderBy(student => student.Name).ToList();
     }
 
-    //public void RemoveStudent(int id)
-    //{
-    //    Student student = GetStudentById(id);
-    //    if (student != null)
-    //    {
-    //        students.Remove(student);
-    //        //SaveStudents();
-    //    }
-    //}
     public bool RemoveStudent(int id)
     {
         Student student = students.Find(s => s.Id == id);
         if (student != null)
         {
             students.Remove(student);
+            SaveStudents();
             return true;
         }
         return false;
     }
-
-    //private void SaveStudents()
-    //{
-    //    string json = JsonUtility.ToJson(new StudentListWrapper { students = this.students });
-    //    File.WriteAllText(filePath, json);
-    //}
-
-    //private void LoadStudents()
-    //{
-    //    if (File.Exists(filePath))
-    //    {
-    //        string json = File.ReadAllText(filePath);
-    //        StudentListWrapper wrapper = JsonUtility.FromJson<StudentListWrapper>(json);
-    //        students = wrapper.students;
-    //    }
-    //}
 
     public void UpdateStudent(Student updatedStudent)
     {
@@ -91,6 +67,7 @@ public class StudentManager
             existingStudent.Sex = updatedStudent.Sex;
             existingStudent.Major = updatedStudent.Major;
             existingStudent.Grade = updatedStudent.Grade;
+            SaveStudents();
         }
         else
         {
@@ -104,7 +81,7 @@ public class StudentManager
     //    {
     //        if (students[i].Id == updatedStudent.Id)
     //        {
-    //            // C?p nh?t t?ng tr??ng c?a sinh viên
+    //            // Cap nhat tung truong cua sinh vien
     //            students[i].Name = updatedStudent.Name;
     //            students[i].Age = updatedStudent.Age;
     //            students[i].Sex = updatedStudent.Sex;
@@ -129,5 +106,61 @@ public class StudentManager
     private class StudentListWrapper
     {
         public List<Student> students;
+    }
+
+    public void SaveStudents()
+    {
+        StudentListWrapper wrapper = new StudentListWrapper();
+        wrapper.students = students;
+
+        string json = JsonUtility.ToJson(wrapper);
+        File.WriteAllText(filePath, json);
+
+        //Debug.Log("Saved student data to: " + filePath);
+    }
+
+    //private void LoadStudents()
+    //{
+    //    if (File.Exists(filePath))
+    //    {
+    //        string json = File.ReadAllText(filePath);
+    //        StudentListWrapper wrapper = JsonUtility.FromJson<StudentListWrapper>(json);
+    //        students = wrapper.students;
+    //    }
+    //}
+
+    public void LoadStudents()
+    {
+        if (File.Exists(filePath))
+        {
+            try
+            {
+                string json = File.ReadAllText(filePath);
+
+                if (string.IsNullOrEmpty(json))
+                {
+                    Debug.LogWarning("Student data file is empty.");
+                    return;
+                }
+
+                StudentListWrapper wrapper = JsonUtility.FromJson<StudentListWrapper>(json);
+
+                if (wrapper == null || wrapper.students == null)
+                {
+                    Debug.LogWarning("Student data file is not in correct format.");
+                    return;
+                }
+
+                students = wrapper.students;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Failed to load student data: " + e.Message);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Student data file not found at: " + filePath);
+        }
     }
 }

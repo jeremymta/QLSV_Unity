@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Text;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using System.IO;
 
 public class StudentUIManager : MonoBehaviour
 {
@@ -241,6 +242,25 @@ public class StudentUIManager : MonoBehaviour
             studentText.GetComponent<StudentInfo>().txt_5.text = student.Major;
             studentText.GetComponent<StudentInfo>().txt_6.text = student.Grade.ToString();
         }
-        
+    }
+
+    //public void SaveStudentsToJson()
+    //{
+    //    List<Student> students = studentManager.GetAllStudents();
+    //    string json = JsonUtility.ToJson(new StudentListWrapper { students = students });
+    //    File.WriteAllText(Application.persistentDataPath + "/students.json", json);
+    //    Debug.Log("Students data saved to " + Application.persistentDataPath + "/students.json");
+    //}
+
+    //[System.Serializable]
+    //public class StudentListWrapper
+    //{
+    //    public List<Student> students;
+    //}
+
+    public void SaveStudentsToJson()
+    {
+        studentManager.SaveStudents();
+        Debug.Log("Students data saved to " + Application.persistentDataPath + "/students.json");
     }
 }
