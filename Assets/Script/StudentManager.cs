@@ -40,6 +40,11 @@ public class StudentManager
         return students.Find(student => student.Id == id);
     }
 
+    public List<Student> SortStudentsByName()
+    {
+        return students.OrderBy(student => student.Name).ToList();
+    }
+
     //public void RemoveStudent(int id)
     //{
     //    Student student = GetStudentById(id);
@@ -113,6 +118,11 @@ public class StudentManager
     public List<Student> SearchStudentsByName(string name)
     {
         return students.Where(s => s.Name.ToLower().Contains(name.ToLower())).ToList();
+    }
+
+    public List<Student> SortStudentsByGPA()
+    {
+        return students.OrderByDescending(s => s.Grade).ToList();
     }
 
     [System.Serializable]

@@ -154,6 +154,18 @@ public class StudentUIManager : MonoBehaviour
         }
     }
 
+    public void SortStudentsByGPA()
+    {
+        List<Student> sortedStudents = studentManager.SortStudentsByGPA();
+        DisplayStudents(sortedStudents);
+    }
+
+    public void SortStudentsByName()
+    {
+        List<Student> sortedStudents = studentManager.SortStudentsByName();
+        DisplayStudents(sortedStudents);
+    }
+
     private bool ValidateInputs(out int id, out int age, out float grade)
     {
         id = 0;
