@@ -261,6 +261,6 @@ public class StudentUIManager : MonoBehaviour
     public void SaveStudentsToJson()
     {
         studentManager.SaveStudents();
-        Debug.Log("Students data saved to " + Application.persistentDataPath + "/students.json");
+        Debug.Log("Students data saved to " + Application.dataPath + "/students.json");
     }
 }

@@ -20,7 +20,7 @@ public class StudentManager
             new Student(4, "Bob Brown", 23, true, "Chemistry", 3.2f),
             new Student(5, "Charlie Davis", 24, true, "Biology", 3.6f)
         };
-        filePath = Path.Combine(Application.persistentDataPath, "students.json");
+        filePath = "Assets/students.json";
         LoadStudents();
     }
 
