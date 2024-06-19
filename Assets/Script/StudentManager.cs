@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 public class StudentManager
@@ -59,7 +60,6 @@ public class StudentManager
         return false;
     }
 
-
     //private void SaveStudents()
     //{
     //    string json = JsonUtility.ToJson(new StudentListWrapper { students = this.students });
@@ -110,6 +110,10 @@ public class StudentManager
     //    }
     //}
 
+    public List<Student> SearchStudentsByName(string name)
+    {
+        return students.Where(s => s.Name.ToLower().Contains(name.ToLower())).ToList();
+    }
 
     [System.Serializable]
     private class StudentListWrapper

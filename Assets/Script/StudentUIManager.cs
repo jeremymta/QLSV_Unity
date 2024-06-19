@@ -14,6 +14,7 @@ public class StudentUIManager : MonoBehaviour
     public InputField majorInputField;
     public InputField gradeInputField;
     public InputField deleteIdInputField;
+    public InputField searchNameInputField;
 
     //public InputField searchInputField;
     //public Button searchButton;
@@ -22,15 +23,12 @@ public class StudentUIManager : MonoBehaviour
     public GameObject studentTextPrefab; //Prefab cho moi SV
     public Text errorText; // Add an errorText UI element to display error messages
 
-
     private StudentManager studentManager;
-
 
     void Start()
     {
         studentManager = new StudentManager();
         //DisplayAllStudents();
-        
 
     }
 
@@ -38,11 +36,18 @@ public class StudentUIManager : MonoBehaviour
     {
         if (ValidateInputs(out int id, out int age, out float grade))
         {
+            if (studentManager.GetStudentById(id) != null)
+            {
+                DisplayError("Student with this ID already exists.");
+                return;
+            }
+
             string name = nameInputField.text;
             bool sex = toggleMale.isOn;
             string major = majorInputField.text;
 
-            Student newStudent = new Student(id, name, age, sex, major, grade);
+            //Student newStudent = new Student(id, name, age, sex, major, grade);
+            Student newStudent = new(id, name, age, sex, major, grade);
             studentManager.AddStudent(newStudent);
 
             DisplayAllStudents();
@@ -77,23 +82,27 @@ public class StudentUIManager : MonoBehaviour
             if (isRemoved)
             {
                 DisplayAllStudents();
-                //ClearInputs();
+                ClearInputs();
             }
             else
             {
-                Debug.Log("Student not found.");
+                DisplayError("Student not found.");
             }
         }
         else
         {
-            Debug.Log("Invalid ID format.");
+            DisplayError("Invalid ID format.");
         }
     }
 
-
     public void UpdateStudent()
     {
-        int id = int.Parse(idInputField.text);
+        if(!int.TryParse(idInputField.text, out int id))
+        {
+            DisplayError("Invalid ID format.");
+            return;
+        }
+        //int id = int.Parse(idInputField.text);
         Student existingStudent = studentManager.GetStudentById(id);
 
         if (existingStudent == null)
@@ -126,8 +135,24 @@ public class StudentUIManager : MonoBehaviour
 
         // Display updated student list
         DisplayAllStudents();
+        //ClearInputs();
     }
 
+    public void SearchStudent()
+    {
+        string searchName = searchNameInputField.text;
+        List<Student> students = studentManager.SearchStudentsByName(searchName);
+
+        if (students.Count == 0)
+        {
+            DisplayError("No students found with the given name.");
+            Debug.Log("Khong tim thay SV can xoa");
+        }
+        else
+        {
+            DisplayStudents(students);
+        }
+    }
 
     private bool ValidateInputs(out int id, out int age, out float grade)
     {
@@ -170,6 +195,7 @@ public class StudentUIManager : MonoBehaviour
 
     private void ClearInputs()
     {
+        deleteIdInputField.text = string.Empty;
         idInputField.text = "";
         nameInputField.text = "";
         ageInputField.text = "";
