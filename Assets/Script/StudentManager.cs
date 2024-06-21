@@ -21,13 +21,9 @@ public class StudentManager
             new Student(5, "Charlie Davis", 24, true, "Biology", 3.6f)
         };
         filePath = "Assets/students.json";
-        LoadStudents();
-    }
+        //filePath = Path.Combine(Application.dataPath, "students.json");
 
-    public void AddStudent(Student student)
-    {
-        students.Add(student);
-        SaveStudents();
+        LoadStudents();
     }
 
     public List<Student> GetAllStudents()
@@ -40,9 +36,10 @@ public class StudentManager
         return students.Find(student => student.Id == id);
     }
 
-    public List<Student> SortStudentsByName()
+    public void AddStudent(Student student)
     {
-        return students.OrderBy(student => student.Name).ToList();
+        students.Add(student);
+        SaveStudents();
     }
 
     public bool RemoveStudent(int id)
@@ -95,6 +92,11 @@ public class StudentManager
     public List<Student> SearchStudentsByName(string name)
     {
         return students.Where(s => s.Name.ToLower().Contains(name.ToLower())).ToList();
+    }
+
+    public List<Student> SortStudentsByName()
+    {
+        return students.OrderBy(student => student.Name).ToList();
     }
 
     public List<Student> SortStudentsByGPA()
