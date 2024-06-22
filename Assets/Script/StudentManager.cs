@@ -21,6 +21,7 @@ public class StudentManager
             new Student(5, "Charlie Davis", 24, true, "Biology", 3.6f)
         };
         filePath = "Assets/students.json";
+
         //filePath = Path.Combine(Application.dataPath, "students.json");
 
         LoadStudents();
@@ -116,7 +117,9 @@ public class StudentManager
         wrapper.students = students;
 
         string json = JsonUtility.ToJson(wrapper);
-        File.WriteAllText(filePath, json);
+
+        //PlayerPrefs.SetString("StudentInfoList", json);
+        //File.WriteAllText(filePath, json);
 
         //Debug.Log("Saved student data to: " + filePath);
     }
@@ -147,6 +150,8 @@ public class StudentManager
 
                 StudentListWrapper wrapper = JsonUtility.FromJson<StudentListWrapper>(json);
 
+                //PlayerPrefs.GetString("StudentInfoList")
+
                 if (wrapper == null || wrapper.students == null)
                 {
                     Debug.LogWarning("Student data file is not in correct format.");
@@ -154,6 +159,7 @@ public class StudentManager
                 }
 
                 students = wrapper.students;
+
             }
             catch (Exception e)
             {
